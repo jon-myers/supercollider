@@ -1,0 +1,115 @@
+(
+w = Window("My Analyzer", Rect(0, 0, 511, 300)); // width should be 511
+f = FreqScopeView(w, w.view.bounds);
+f.active_(true); // turn it on the first time;
+
+w.onClose_({ f.kill }); // you must have this
+w.front;
+// start two sine waves
+)
+
+
+
+(
+SynthDef.new(\feedback,
+	{var bw1, bw2,bw3, in, bw4, fs1,fs2,fs3,fs4, ddd,mul,clock,phs,maxvol,harms;
+		clock=1.0.rand;
+		phs=clock/10;
+		maxvol=1.0;
+		bw1=SinOsc.kr(clock*0.06, 0, 1.0, 1.0);
+		bw2=SinOsc.kr(clock*0.07, 0.75, 1.0, 1.0);
+		bw3=SinOsc.kr(clock*0.05, 0.5, 1.0, 1.0);
+		bw4=SinOsc.kr(clock*0.04, 0.25, 1.0, 1.0);
+		fs1=SinOsc.kr(clock*0.09, 0.5, 10000,10000);
+		fs2=SinOsc.kr(clock*0.055, 0.75, 10000, 10000);
+		fs3=SinOsc.kr(clock*0.05, 0.25, 10000, 10000);
+		fs4=SinOsc.kr(clock*0.045, 0, 10000, 10000);
+		ddd=SinOsc.kr(clock*0.04,0, 30, 30);
+		harms=SinOsc.kr(0.03,0, 2500, 2505);
+		mul=SinOsc.kr(0.05,phs.postln,maxvol,1.5*maxvol);
+
+		//in=SoundIn.ar([0,1]);
+		//in=PinkNoise.ar;
+		in=Blip.ar(ddd,harms);
+		Out.ar(0,
+			BBandStop.ar(
+				BBandStop.ar(
+					BBandStop.ar(
+						BBandStop.ar(
+							in*KeyState.kr(0,1,1),
+							fs1,
+							bw4, mul),
+						fs2,
+						bw1,mul),
+
+					fs3,
+					bw2, mul),
+				fs4,
+				bw3,
+				mul))
+}).add
+)
+
+a=Synth(\feedback);
+a.free;
+
+
+(
+SynthDef.new(\feedback2,
+	{var bw1, bw2,bw3, in, bw4, fs1,fs2,fs3,fs4, ddd,mul,clock,phs,maxvol,harms;
+		clock=1.0.rand;
+		phs=clock/10;
+		maxvol=1.0;
+		bw1=SinOsc.kr(clock*0.06, 0, 1.0, 1.0);
+		bw2=SinOsc.kr(clock*0.07, 0.75, 1.0, 1.0);
+		bw3=SinOsc.kr(clock*0.05, 0.5, 1.0, 1.0);
+		bw4=SinOsc.kr(clock*0.04, 0.25, 1.0, 1.0);
+		fs1=SinOsc.kr(clock*0.09, 0.5, 10000,10000);
+		fs2=SinOsc.kr(clock*0.055, 0.75, 10000, 10000);
+		fs3=SinOsc.kr(clock*0.05, 0.25, 10000, 10000);
+		fs4=SinOsc.kr(clock*0.045, 0, 10000, 10000);
+		ddd=SinOsc.kr(clock*0.04,0, 30, 30);
+		harms=SinOsc.kr(0.03,0, 2500, 2505);
+		mul=SinOsc.kr(0.05,phs.postln,maxvol,1.5*maxvol);
+
+		//in=SoundIn.ar([0,1]);
+		//in=PinkNoise.ar;
+		in=Blip.ar(ddd,harms);
+		Out.ar(1,
+			BBandStop.ar(
+				BBandStop.ar(
+					BBandStop.ar(
+						BBandStop.ar(
+							in*KeyState.kr(0,1,1),
+							fs1,
+							bw4, mul),
+						fs2,
+						bw1,mul),
+
+					fs3,
+					bw2, mul),
+				fs4,
+				bw3,
+				mul))
+}).add
+)
+b=Synth(\feedback2);
+(
+a=Synth(\feedback);
+b=Synth(\feedback2);
+)
+thisProcess.platform.recordingsDir
+
+(
+s.recHeaderFormat_("aiff");  // or "aiff"
+s.recSampleFormat_("int16");  // or "int24" or "float"
+s.prepareForRecord; // you always have to call this first before recording
+)
+
+// start recording
+s.record;
+
+
+s.stopRecording  // if you use command-period, your recording will stop already~
+
+4.rand
