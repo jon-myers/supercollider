@@ -30,10 +30,54 @@ z.fader4.onChanged = {|vel|
 	a.set(\del2, 5*(vel/127));
 };
 z.fader5.onChanged = {|vel|
-	a.set(\lf1,
-)
+	a.set(\lf1, (-1*2854*log2(128-vel))+20000);
+}
+z.fader6.onChanged = {|vel|
+	a.set(\lf2, (-1*2854*log2(128-vel))+20000);
+};
+z.fader7.onChanged = {|vel|
+	a.set(\rf1, (-1*2854*log2(128-vel))+20000);
+};
+z.fader8.onChanged = {|vel|
+	a.set(\rf2, (-1*2854*log2(128-vel))+20000);
+};
+z.knob5.onChanged = {|vel|
+	a.set(\lb1, (vel/127));
+};
+z.knob6.onChanged = {|vel|
+	a.set(\lb2, (vel/127));
+};
+z.knob7.onChanged = {|vel|
+	a.set(\rb1, (vel/127));
+};
+z.knob8.onChanged = {|vel|
+	a.set(\rb2, (vel/127));
+};
+
+.lag
+
+
 
 	log2(1)
 
 	//yeah
-	
+
+	(-1*2854*log2(128-4))+20000
+
+	19980/7
+
+	log2(128)
+
+(
+// used to lag pitch
+{
+	SinOsc.ar(		// sine wave
+		Lag.kr(			// lag the modulator
+			LFPulse.kr(4, 0, 0.5, 50, 400),	// frequency modulator
+			Line.kr(0, 1, 15)				// modulate lag time
+		),
+		0,	// phase
+		0.3	// sine amplitude
+	)
+}.play
+)
