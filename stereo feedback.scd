@@ -1,11 +1,10 @@
 (
-SynthDef.new('test', {|voll=1,volr=1,pan1=(-1),pan2=(1),del1=0,del2=0,lf1=20000,lb1=1|
+SynthDef.new('test', {|voll=1,volr=1,pan1=(-1),pan2=(1),del1=0,del2=0,lf1=20000,lb1=1, rf1=20000, rb1=1|
 	var in1,in2,out1,out2;
 	in1=BBandStop.ar(DelayC.ar(SoundIn.ar(0, voll),5.0,del1),lf1,lb1,);
-	in2=DelayC.ar(SoundIn.ar(1,volr),5.0,del2);
+	in2=BBandStop.ar(DelayC.ar(SoundIn.ar(1,volr),5.0,del2), rf1,rb1);
 	out1=Pan2.ar(in1, pan1);
 	out2=Pan2.ar(in2, pan2);
-
 	Out.ar(0, out1+out2)}).store
 )
 
@@ -33,4 +32,8 @@ z.fader4.onChanged = {|vel|
 z.fader5.onChanged = {|vel|
 	a.set(\lf1,
 )
+
+	log2(1)
+
+	//yeah
 	
